@@ -1,0 +1,60 @@
+services:
+    common.inbox.table_schema_configurator:
+        class: Ticketing\Common\Infrastructure\Inbox\InboxTableSchemaConfiguratorEventListener
+        arguments:
+            $connection: '@common.inbox.connection'
+        tags:
+            - {name: doctrine.event_listener, event: 'postGenerateSchema'}
+
+
+
+    common.inbox.integration_event_message_handler:
+        class: Ticketing\Common\Infrastructure\Inbox\IntegrationEventMessageHandler
+        arguments:
+            - '@common.inbox.storage'
+        tags:
+            - messenger.message_handler
+
+    Ticketing\Common\Infrastructure\Inbox\IntegrationEventMessageHandler: '@common.inbox.integration_event_message_handler'
+
+    common.inbox.connection:
+        class: Ticketing\Common\Infrastructure\Inbox\Connection
+        arguments:
+            $connection: '@doctrine.dbal.default_connection'
+
+#    common.inbox.message_handler:
+#        class: Ticketing\Common\Infrastructure\Inbox\InboxMessageHandler
+#        arguments:
+#            - '@logger'
+#        tags:
+#            - messenger.message_handler
+
+    common.inbox.storage:
+        class: Ticketing\Common\Infrastructure\Inbox\InboxMessageStorage
+        arguments:
+            - '@common.inbox.connection'
+
+    Ticketing\Common\Infrastructure\Inbox\InboxMessageStorage: '@common.inbox.storage'
+
+    common.inbox.message_consume_command:
+        class: \Ticketing\Common\Infrastructure\Inbox\Console\InboxMessageConsumeCommand
+        arguments:
+            - '@common.inbox.storage'
+            - '@logger'
+            - '@cache.app'
+        tags:
+            - 'console.command'
+
+    common.inbox.message_stop_consume_command:
+        class: Ticketing\Common\Infrastructure\Inbox\Console\InboxMessageStopConsumersCommand
+        arguments:
+            - '@cache.app'
+        tags:
+            - 'console.command'
+
+    common.inbox.messages_retry_command:
+        class: Ticketing\Common\Infrastructure\Inbox\Console\InboxMessagesRetryCommand
+        arguments:
+            - '@common.inbox.storage'
+        tags:
+            - 'console.command'

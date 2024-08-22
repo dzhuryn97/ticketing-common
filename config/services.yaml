@@ -1,0 +1,50 @@
+services:
+#    _instanceof:
+#        Ticketing\Common\Application\Bus\CommandHandlerInterface:
+#            tags:
+#                - { name: messenger.message_handler }
+    common.application.command.bus:
+        class: Ticketing\Common\Infrastructure\Command\CommandBus
+        arguments:
+            $messageBus: '@common.command_bus'
+
+    Ticketing\Common\Application\Command\CommandBusInterface: '@common.application.command.bus'
+
+    common.application.query.bus:
+        class: Ticketing\Common\Infrastructure\Query\QueryBus
+        arguments:
+            $messageBus: '@common.query_bus'
+
+    Ticketing\Common\Application\Query\QueryBusInterface: '@common.application.query.bus'
+
+    common.flusher:
+        class: Ticketing\Common\Infrastructure\Flusher
+        arguments:
+            - '@doctrine.orm.entity_manager'
+
+    Ticketing\Common\Application\FlusherInterface: '@common.flusher'
+
+    common.event_bus:
+        class: Ticketing\Common\Infrastructure\EventBus\EventBus
+        arguments:
+            $distributedMessageBus: '@common.distributed_message_bus'
+
+    Ticketing\Common\Application\EventBus\EventBusInterface: '@common.event_bus'
+
+    common.security.security_service:
+        class: Ticketing\Common\Infrastructure\Security\SecurityService
+        arguments:
+            - '@security.helper'
+    Ticketing\Common\Application\Security\Security: '@common.security.security_service'
+
+    common.caching.cache:
+        class: Ticketing\Common\Infrastructure\Caching\SymfonyBasedCache
+        arguments:
+            - '@cache.app'
+
+    Ticketing\Common\Application\Caching\CacheInterface: '@common.caching.cache'
+
+    common.original_domain_exception_middleware:
+        class: Ticketing\Common\Infrastructure\Command\OriginalDomainExceptionMiddleware
+        arguments:
+            $requestStack: '@request_stack'

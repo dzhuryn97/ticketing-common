@@ -1,0 +1,11 @@
+{
+    "name": "volodymyr/ticketing-common",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Ticketing\\Common\\": "src/"
+        }
+    },
+    "version": "0.0.1",
+    "require": {}
+}
