@@ -18,7 +18,6 @@ class OriginalDomainExceptionMiddlewareTest extends TestCase
     /**
      * @test
      */
-
     public function handleNextHandleReturnEnvelopeReturnThoseEnvelope()
     {
         $requestMock = $this->createMock(Request::class);
