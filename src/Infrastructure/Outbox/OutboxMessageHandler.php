@@ -9,9 +9,8 @@ use Symfony\Component\Messenger\MessageBusInterface;
 class OutboxMessageHandler
 {
     public function __construct(
-        private readonly MessageBusInterface $messageBus
-    )
-    {
+        private readonly MessageBusInterface $messageBus,
+    ) {
     }
 
     public function __invoke(OutboxMessage $outboxMessage)

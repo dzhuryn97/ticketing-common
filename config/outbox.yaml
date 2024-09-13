@@ -1,6 +1,6 @@
 services:
     common.outbox.domain_events_releaser:
-        class: Ticketing\Common\Infrastructure\Outbox\ReleaseDomainEventsAsOutboxOnFlushEventHandler
+        class: Ticketing\Common\Infrastructure\Outbox\ReleaseDomainEventsAsOutboxOnPostFlushEventHandler
         tags:
             - { name: doctrine.event_listener, event: onFlush }
         arguments:
@@ -13,3 +13,13 @@ services:
             - '@Symfony\Component\Messenger\MessageBusInterface'
         tags:
             - messenger.message_handler
+
+when@test:
+    services:
+        common.outbox.domain_events_releaser:
+            class: Ticketing\Common\Infrastructure\Outbox\ReleaseDomainEventsAsOutboxOnPostFlushEventHandler
+            tags:
+                - { name: doctrine.event_listener, event: postFlush }
+            arguments:
+                $outboxMessageBus: '@common.outbox_message_bus'
+                $entityManager: '@doctrine.orm.entity_manager'

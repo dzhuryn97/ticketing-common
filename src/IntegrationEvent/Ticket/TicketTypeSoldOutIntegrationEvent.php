@@ -10,9 +10,8 @@ class TicketTypeSoldOutIntegrationEvent extends AbstractIntegrationEvent
     public function __construct(
         UuidInterface $id,
         \DateTimeImmutable $occurredOn,
-        public readonly UuidInterface $ticketTypeId
-    )
-    {
+        public readonly UuidInterface $ticketTypeId,
+    ) {
         parent::__construct($id, $occurredOn);
     }
 }

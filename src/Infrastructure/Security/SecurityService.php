@@ -8,13 +8,11 @@ use Ticketing\Common\Application\Security\AuthUserDto;
 use Ticketing\Common\Application\Security\Security;
 use Ticketing\Common\Presenter\Symfony\Security\AuthUser;
 
-
 class SecurityService implements Security
 {
     public function __construct(
         private readonly SecurityComponent $security,
-    )
-    {
+    ) {
     }
 
     public function isAuthenticated(): bool
@@ -30,6 +28,6 @@ class SecurityService implements Security
             return null;
         }
 
-        return new AuthUserDto(UuidV4::fromString($authenticatedUser->getUserIdentifier()), $authenticatedUser->getEmail());
+        return new AuthUserDto(UuidV4::fromString($authenticatedUser->getUserIdentifier()), 'test');
     }
 }

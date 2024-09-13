@@ -11,9 +11,8 @@ class TicketArchivedIntegrationEvent extends AbstractIntegrationEvent
         UuidInterface $id,
         \DateTimeImmutable $occurredOn,
         public readonly UuidInterface $ticketId,
-        public readonly string $code
-    )
-    {
+        public readonly string $code,
+    ) {
         parent::__construct($id, $occurredOn);
     }
 }

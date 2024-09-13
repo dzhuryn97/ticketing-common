@@ -6,7 +6,6 @@ use Ramsey\Uuid\UuidInterface;
 
 class TicketTypeModel
 {
-
     public function __construct(
         public readonly UuidInterface $id,
         public readonly UuidInterface $eventId,
@@ -14,9 +13,6 @@ class TicketTypeModel
         public readonly float $price,
         public readonly string $currency,
         public readonly int $quantity,
-
-    )
-    {
+    ) {
     }
-
 }

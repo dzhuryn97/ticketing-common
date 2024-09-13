@@ -11,7 +11,7 @@ class EntityNotFoundException extends \Exception
 
     public static function fromClassAndId($id, string $class): self
     {
-        $parts = explode('\\',$class);
+        $parts = explode('\\', $class);
         $className = end($parts);
 
         return new self(sprintf('Entity of type %s with identifier %s not found', $className, $id));

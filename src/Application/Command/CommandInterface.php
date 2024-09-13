@@ -7,5 +7,4 @@ namespace Ticketing\Common\Application\Command;
  */
 interface CommandInterface
 {
-
 }

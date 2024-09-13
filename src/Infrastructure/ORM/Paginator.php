@@ -7,10 +7,7 @@ use Ticketing\Common\Domain\Dto\PaginatedResults;
 
 class Paginator
 {
-    /**
-     * @return PaginatedResults
-     */
-    public static function  paginate($query, int $page = 1, int $pageSize = 10): PaginatedResults
+    public static function paginate($query, int $page = 1, int $pageSize = 10): PaginatedResults
     {
         $paginator = new OrmPaginator($query);
 
@@ -20,7 +17,8 @@ class Paginator
             ->setMaxResults($pageSize);
 
 
-        $lastPage = (int)ceil($paginator->count() / $paginator->getQuery()->getMaxResults());
+        $lastPage = (int) ceil($paginator->count() / $paginator->getQuery()->getMaxResults());
+
         return new PaginatedResults(
             iterator_to_array($paginator->getIterator()),
             $page,
@@ -29,5 +27,4 @@ class Paginator
             $paginator->count()
         );
     }
-
 }

@@ -9,5 +9,4 @@ use App\Domain\Event\Event;
  */
 class EventCollection extends TestCollection
 {
-
 }

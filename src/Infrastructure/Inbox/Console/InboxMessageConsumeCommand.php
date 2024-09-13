@@ -15,7 +15,6 @@ use Ticketing\Common\Infrastructure\Inbox\InboxMessageStorage;
 
 class InboxMessageConsumeCommand extends Command
 {
-
     private const MAX_RETRY = 3;
     private const RETRY_DELAY = 1;
     private const RETRY_MULTIPLIER = 2;
@@ -24,11 +23,10 @@ class InboxMessageConsumeCommand extends Command
 
     public function __construct(
         private readonly InboxMessageStorage $inboxMessageStorage,
-        private readonly LoggerInterface     $logger,
+        private readonly LoggerInterface $logger,
         private readonly CacheItemPoolInterface $cache,
-        private readonly array               $eventToHandlersMap
-    )
-    {
+        private readonly array $eventToHandlersMap,
+    ) {
         $this->startedAt = microtime(true);
         parent::__construct();
     }
@@ -61,13 +59,12 @@ class InboxMessageConsumeCommand extends Command
         return Command::SUCCESS;
     }
 
-//[warning] Error thrown while handling message Ticketing\Common\Infrastructure\Outbox\OutboxMessage. Sending for retry #3 using 3918 ms delay. Error: "Handling "Ticketing\Common\Infrastructure\Outbox\OutboxMessage" failed: "
-//[info] Received message Ticketing\Common\Infrastructure\Outbox\OutboxMessage
-//[critical] Error thrown while handling message Ticketing\Common\Infrastructure\Outbox\OutboxMessage. Removing from transport after 3 retries. Error: "Handling "Ticketing\Common\Infrastructure\Outbox\OutboxMessage" failed: "
+    // [warning] Error thrown while handling message Ticketing\Common\Infrastructure\Outbox\OutboxMessage. Sending for retry #3 using 3918 ms delay. Error: "Handling "Ticketing\Common\Infrastructure\Outbox\OutboxMessage" failed: "
+    // [info] Received message Ticketing\Common\Infrastructure\Outbox\OutboxMessage
+    // [critical] Error thrown while handling message Ticketing\Common\Infrastructure\Outbox\OutboxMessage. Removing from transport after 3 retries. Error: "Handling "Ticketing\Common\Infrastructure\Outbox\OutboxMessage" failed: "
 
-//[info] Message Ticketing\Common\Infrastructure\Outbox\OutboxMessage handled by Ticketing\Common\Infrastructure\Outbox\OutboxMessageHandler::__invoke
-//[info] Ticketing\Common\Infrastructure\Outbox\OutboxMessage was handled successfully (acknowledging to transport).
-
+    // [info] Message Ticketing\Common\Infrastructure\Outbox\OutboxMessage handled by Ticketing\Common\Infrastructure\Outbox\OutboxMessageHandler::__invoke
+    // [info] Ticketing\Common\Infrastructure\Outbox\OutboxMessage was handled successfully (acknowledging to transport).
 
     private function tryHandle(InboxMessage $message, $retry, $delay)
     {
@@ -75,7 +72,8 @@ class InboxMessageConsumeCommand extends Command
 
         $eventClass = get_class($integrationEvent);
         $this->logger->info(
-            'Handling inboxMessage with integrationEvent {event}', ['event' => get_class($integrationEvent)]
+            'Handling inboxMessage with integrationEvent {event}',
+            ['event' => get_class($integrationEvent)]
         );
 
         try {
@@ -85,6 +83,7 @@ class InboxMessageConsumeCommand extends Command
             if (!$handlers) {
                 $this->inboxMessageStorage->ack($message);
                 $this->logger->info('No handlers for event {event}', ['event' => $eventClass]);
+
                 return;
             }
 
@@ -100,9 +99,10 @@ class InboxMessageConsumeCommand extends Command
                         'event' => $eventClass,
                         'retry' => $retry,
                         'error' => $e->getMessage(),
-                        'exception' => $e
+                        'exception' => $e,
                     ]
                 );
+
                 return;
             }
 
@@ -111,12 +111,12 @@ class InboxMessageConsumeCommand extends Command
                 'retry' => $retry,
                 'delay' => $delay,
                 'error' => $e->getMessage(),
-                'exception' => $e
+                'exception' => $e,
             ]);
             sleep($delay);
 
             $nextDelay = $delay * self::RETRY_MULTIPLIER;
-            $retry++;
+            ++$retry;
 
             $this->tryHandle($message, $retry, $nextDelay);
         }
@@ -124,14 +124,12 @@ class InboxMessageConsumeCommand extends Command
 
     private function handle(array $handlers, AbstractIntegrationEvent $integrationEvent)
     {
-
-
         foreach ($handlers as $handler) {
             $handler($integrationEvent);
 
             $this->logger->info('Event {event} handled by {handler}::__invoke', [
                 'event' => get_class($integrationEvent),
-                'handler' => get_class($handler)
+                'handler' => get_class($handler),
             ]);
         }
     }
@@ -144,13 +142,12 @@ class InboxMessageConsumeCommand extends Command
             return true;
         }
 
-        if($this->startedAt < $cacheItem->get()){
+        if ($this->startedAt < $cacheItem->get()) {
             $this->logger->info('Received signal to stop');
+
             return false;
         }
 
         return true;
     }
-
-
 }

@@ -13,9 +13,8 @@ class InboxMessagesRetryCommand extends Command
     private InboxMessageStorage $inboxMessageStorage;
 
     public function __construct(
-        InboxMessageStorage $inboxMessageStorage
-    )
-    {
+        InboxMessageStorage $inboxMessageStorage,
+    ) {
         parent::__construct();
         $this->inboxMessageStorage = $inboxMessageStorage;
     }
@@ -32,6 +31,7 @@ class InboxMessagesRetryCommand extends Command
         $this->inboxMessageStorage->retry();
 
         $io->success('Marked messages for retry');
+
         return Command::SUCCESS;
     }
 }

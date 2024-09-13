@@ -2,7 +2,6 @@
 
 namespace Ticketing\Common\Domain;
 
-
 abstract class DomainEntity
 {
     /**
@@ -10,7 +9,7 @@ abstract class DomainEntity
      */
     protected array $domainEvents = [];
 
-    protected function raiseDomainEvent(DomainEvent $domainEvent):void
+    protected function raiseDomainEvent(DomainEvent $domainEvent): void
     {
         $this->domainEvents[] = $domainEvent;
     }
@@ -22,6 +21,7 @@ abstract class DomainEntity
     {
         $events = $this->domainEvents;
         $this->domainEvents = [];
+
         return $events;
     }
 
@@ -30,9 +30,8 @@ abstract class DomainEntity
         return $this->domainEvents;
     }
 
-    public function clearDomainEvents():void
+    public function clearDomainEvents(): void
     {
         $this->domainEvents = [];
     }
-
 }

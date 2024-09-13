@@ -11,27 +11,26 @@ use Symfony\Component\Messenger\Middleware\StackInterface;
 class OriginalDomainExceptionMiddleware implements MiddlewareInterface
 {
     public function __construct(
-        private readonly RequestStack $requestStack
-    )
-    {
+        private readonly RequestStack $requestStack,
+    ) {
     }
 
     public function handle(Envelope $envelope, StackInterface $stack): Envelope
     {
-        ;
         try {
-            $envelop = $stack->next()->handle($envelope, $stack);
-        } catch (HandlerFailedException $e){
-            $domainsException =$e->getWrappedExceptions(\DomainException::class);
-            if($this->support() && count($domainsException) == 1){
+            $envelope = $stack->next()->handle($envelope, $stack);
+        } catch (HandlerFailedException $e) {
+            $domainsException = $e->getWrappedExceptions(\DomainException::class);
+            if ($this->support() && 1 == count($domainsException)) {
                 $originalException = array_values($domainsException)[0];
                 throw  $originalException;
             }
             throw $e;
         }
 
-        return $envelop;
+        return $envelope;
     }
+
     private function support(): bool
     {
         return !is_null($this->requestStack->getMainRequest());

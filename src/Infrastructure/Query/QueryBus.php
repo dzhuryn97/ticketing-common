@@ -15,11 +15,9 @@ class QueryBus implements QueryBusInterface
 
     public function __construct(
         MessageBusInterface $messageBus,
-    )
-    {
+    ) {
         $this->messageBus = $messageBus;
     }
-
 
     public function ask(QueryInterface $query): mixed
     {

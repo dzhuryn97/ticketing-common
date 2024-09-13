@@ -2,7 +2,6 @@
 
 namespace Ticketing\Common;
 
-use App\Domain\Exception\TicketNotFoundException;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -29,22 +28,22 @@ class CommonBundle extends AbstractBundle
             ->end()
             ->end()
             ->end();
-//        $definition->rootNode()
-//            ->children()
-//            ->arrayNode('twitter')
-//            ->children()
-//            ->integerNode('client_id')->end()
-//            ->scalarNode('client_secret')->end()
-//            ->end()
-//            ->end()
-//            ->end();
+        //        $definition->rootNode()
+        //            ->children()
+        //            ->arrayNode('twitter')
+        //            ->children()
+        //            ->integerNode('client_id')->end()
+        //            ->scalarNode('client_secret')->end()
+        //            ->end()
+        //            ->end()
+        //            ->end();
     }
 
     public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void
     {
-//        $eventBusName = $config['event_bus']['name'];
+        //        $eventBusName = $config['event_bus']['name'];
 
-//        dd($eventBusName);
+        //        dd($eventBusName);
         $builder->registerForAutoconfiguration(QueryHandlerInterface::class)
             ->addTag('messenger.message_handler');
 
@@ -63,7 +62,7 @@ class CommonBundle extends AbstractBundle
 
     }
 
-    public function build(\Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    public function build(ContainerBuilder $container)
     {
         $container->addCompilerPass(new InboxCompilerPass());
 
@@ -80,21 +79,18 @@ class CommonBundle extends AbstractBundle
                 'buses' => [
                     'common.command_bus' => [
                         'middleware' => [
-                            'common.original_domain_exception_middleware' => []
-                        ]
+                            'common.original_domain_exception_middleware' => [],
+                        ],
                     ],
                     'common.query_bus' => [
                         'middleware' => [
-                            'common.original_domain_exception_middleware' => []
-                        ]
+                            'common.original_domain_exception_middleware' => [],
+                        ],
                     ],
                     'common.outbox_message_bus' => [
-//                        'default_middleware' => [
-//                            'allow_no_handlers'=> true
-//                        ],
                         'middleware' => [
-                            'doctrine_transaction' => []
-                        ]
+                            'dispatch_after_current_bus' => [],
+                        ],
                     ],
                     'common.distributed_message_bus' => [],
 
@@ -106,28 +102,28 @@ class CommonBundle extends AbstractBundle
                         'options' => [
                             'exchange' => [
                                 'name' => $eventBusConfig['exchange_name'],
-                                'type' => 'direct'
+                                'type' => 'direct',
                             ],
                             'queues' => [
-                                $eventBusConfig['queues_name'] => '~'
-                            ]
-                        ]
+                                $eventBusConfig['queues_name'] => '~',
+                            ],
+                        ],
                     ],
 
                 ],
                 'routing' => [
                     OutboxMessage::class => 'common.outbox',
                     IntegrationEventInterface::class => 'common.distributed',
-//                    OutboxMessage::class => 'sync',
-//                    IntegrationEventInterface::class => 'sync',
-                ]
+                    //                    OutboxMessage::class => 'sync',
+                    //                    IntegrationEventInterface::class => 'sync',
+                ],
             ],
         ], prepend: true);
 
         $container->extension('api_platform', [
             'exception_to_status' => [
-                \DomainException::class => 400
-            ]
-        ],prepend: true);
+                \DomainException::class => 400,
+            ],
+        ], prepend: true);
     }
 }

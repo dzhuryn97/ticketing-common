@@ -3,15 +3,13 @@
 namespace Ticketing\Common\Infrastructure\Inbox;
 
 use Psr\Log\LoggerInterface;
-use Throwable;
 use Ticketing\Common\Application\EventBus\AbstractIntegrationEvent;
 
 class InboxMessageHandler
 {
     public function __construct(
-        private readonly LoggerInterface $logger
-    )
-    {
+        private readonly LoggerInterface $logger,
+    ) {
     }
 
     private const MAX_RETRY = 3;
@@ -33,13 +31,14 @@ class InboxMessageHandler
 
         try {
             $this->handle($integrationEvent);
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
 
-            if($retry > self::MAX_RETRY){
+            if ($retry > self::MAX_RETRY) {
                 throw $e;
             }
 
-            $message = sprintf('Error thrown while handling message %s. Sending for retry # %s using %s ms delay. Error: %s',
+            $message = sprintf(
+                'Error thrown while handling message %s. Sending for retry # %s using %s ms delay. Error: %s',
                 get_class($integrationEvent),
                 $retry,
                 $retryDelay,
@@ -48,9 +47,9 @@ class InboxMessageHandler
 
             $this->logger->info($message);
 
-            sleep($retryDelay/1000);
+            sleep($retryDelay / 1000);
 
-            $retry++;
+            ++$retry;
             $retryDelay = $retryDelay * self::RETRY_MULTIPLIER;
 
             $this->tryHandle($inboxMessage, $retry, $retryDelay);
@@ -60,6 +59,4 @@ class InboxMessageHandler
     private function handle(AbstractIntegrationEvent $integrationEvent)
     {
     }
-
-
 }

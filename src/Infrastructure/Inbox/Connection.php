@@ -3,7 +3,6 @@
 namespace Ticketing\Common\Infrastructure\Inbox;
 
 use Doctrine\DBAL\Connection as DBALConnection;
-use Doctrine\DBAL\Query\ForUpdate\ConflictResolutionMode;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
@@ -16,11 +15,9 @@ class Connection
 
     private const REDELIVER_TIMEOUT = 3600;
 
-
     public function __construct(
-        private readonly DBALConnection $connection
-    )
-    {
+        private readonly DBALConnection $connection,
+    ) {
     }
 
     private function createAvailableQueryBuilder(): QueryBuilder
@@ -35,9 +32,9 @@ class Connection
             ->andWhere('rejected_on is null')
             ->andWhere('processed_on is null')
             ->setParameters([
-                $redeliverLimit
+                $redeliverLimit,
             ], [
-                Types::DATETIME_IMMUTABLE
+                Types::DATETIME_IMMUTABLE,
             ]);
 
         return $qb;
@@ -49,15 +46,15 @@ class Connection
 
         $this->connection->createQueryBuilder()
             ->update(self::TABLE_NAME)
-            ->set('processed_on',':processedOn')
-            ->set('delivered_on','NULL')
+            ->set('processed_on', ':processedOn')
+            ->set('delivered_on', 'NULL')
             ->where('inbox_message_id = :inboxMessageId')
             ->setParameters([
-               'inboxMessageId'=> $inboxMessageId,
-                'processedOn'=>$now,
-            ],[
-                'processedOn'=>Types::DATETIME_IMMUTABLE,
-                'inboxMessageId'=> UuidType::NAME,
+                'inboxMessageId' => $inboxMessageId,
+                'processedOn' => $now,
+            ], [
+                'processedOn' => Types::DATETIME_IMMUTABLE,
+                'inboxMessageId' => UuidType::NAME,
             ])
             ->executeQuery()
         ;
@@ -70,13 +67,13 @@ class Connection
         $this->connection->createQueryBuilder()
             ->update(self::TABLE_NAME)
             ->where('inbox_message_id = :inboxMessageId')
-            ->set('rejected_on',':rejectedOn')
-            ->set('delivered_on','NULL')
+            ->set('rejected_on', ':rejectedOn')
+            ->set('delivered_on', 'NULL')
             ->setParameters([
                 'inboxMessageId' => $inboxMessageId,
                 'rejectedOn' => $now,
-            ],[
-                'inboxMessageId'=> UuidType::NAME,
+            ], [
+                'inboxMessageId' => UuidType::NAME,
                 'rejectedOn' => Types::DATETIME_IMMUTABLE,
             ])
             ->executeQuery()
@@ -87,7 +84,7 @@ class Connection
     {
         $this->connection->createQueryBuilder()
             ->update(self::TABLE_NAME)
-            ->set('rejected_on','NULL')
+            ->set('rejected_on', 'NULL')
             ->executeQuery();
     }
 
@@ -98,15 +95,16 @@ class Connection
 
         $message = $availableQB
             ->select('*')
-            ->orderBy('occurred_on','asc')
+            ->orderBy('occurred_on', 'asc')
             ->forUpdate()
             ->setMaxResults(1)
                 ->executeQuery()
             ->fetchAssociative()
         ;
 
-        if(!$message){
+        if (!$message) {
             $this->connection->commit();
+
             return null;
         }
 
@@ -114,14 +112,14 @@ class Connection
         $now = new \DateTimeImmutable('UTC');
         $this->connection->createQueryBuilder()
             ->update(self::TABLE_NAME)
-            ->set('delivered_on','?')
+            ->set('delivered_on', '?')
             ->where('inbox_message_id = ?')
             ->setParameters([
                 $now,
-                $message['inbox_message_id']
-            ],[
+                $message['inbox_message_id'],
+            ], [
                 Types::DATETIME_IMMUTABLE,
-                UuidType::NAME
+                UuidType::NAME,
             ])
         ;
 
@@ -130,10 +128,10 @@ class Connection
         return $message;
     }
 
-    public function getAvailableMessageCount():int
+    public function getAvailableMessageCount(): int
     {
         $availableQB = $this->createAvailableQueryBuilder();
-        $result=  $availableQB->select('count(*')
+        $result =  $availableQB->select('count(*')
             ->fetchOne();
         dd($result);
     }
@@ -158,7 +156,7 @@ class Connection
             ->values([
                 'inbox_message_id' => ':inboxMessageId',
                 'content' => ':content',
-                'occurred_on' => ':occurredOn'
+                'occurred_on' => ':occurredOn',
             ])
             ->setParameter('inboxMessageId', $inboxMessageId)
             ->setParameter('content', $content)
@@ -187,5 +185,4 @@ class Connection
         $table->setPrimaryKey(['inbox_message_id']);
 
     }
-
 }

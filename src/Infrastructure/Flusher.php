@@ -7,13 +7,11 @@ use Ticketing\Common\Application\FlusherInterface;
 
 class Flusher implements FlusherInterface
 {
-
     private EntityManagerInterface $entityManager;
 
     public function __construct(
-        EntityManagerInterface $entityManager
-    )
-    {
+        EntityManagerInterface $entityManager,
+    ) {
         $this->entityManager = $entityManager;
     }
 
@@ -24,11 +22,11 @@ class Flusher implements FlusherInterface
 
     public function beginTransaction(): void
     {
-        $this->entityManager->beginTransaction();;
+        $this->entityManager->beginTransaction();
     }
 
     public function commit(): void
     {
-        $this->entityManager->commit();;
+        $this->entityManager->commit();
     }
 }

@@ -13,8 +13,7 @@ class UserUpdatedIntegrationEvent extends AbstractIntegrationEvent
         public readonly UuidInterface $userId,
         public readonly string $name,
         public readonly string $email,
-    )
-    {
+    ) {
         parent::__construct($id, $occurredOn);
     }
 }

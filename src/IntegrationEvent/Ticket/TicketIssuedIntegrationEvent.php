@@ -13,9 +13,8 @@ class TicketIssuedIntegrationEvent extends AbstractIntegrationEvent
         public readonly UuidInterface $ticketId,
         public readonly UuidInterface $customerId,
         public readonly UuidInterface $eventId,
-        public readonly string $code
-    )
-    {
+        public readonly string $code,
+    ) {
         parent::__construct($id, $occurredOn);
     }
 }

@@ -9,14 +9,14 @@ use Ticketing\Common\Application\Caching\CacheInterface;
 class SymfonyBasedCache implements CacheInterface
 {
     public function __construct(
-        private readonly CacheItemPoolInterface $cacheItemPool
-    )
-    {
+        private readonly CacheItemPoolInterface $cacheItemPool,
+    ) {
     }
 
     public function find(string $cacheKey)
     {
         $cacheItem = $this->getCacheItem($cacheKey);
+
         return $cacheItem->get();
     }
 

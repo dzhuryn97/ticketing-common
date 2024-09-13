@@ -12,11 +12,9 @@ use Ticketing\Common\Infrastructure\Inbox\InboxConfig;
 
 class InboxMessageStopConsumersCommand extends Command
 {
-
     public function __construct(
-        private readonly CacheItemPoolInterface $cacheApp
-    )
-    {
+        private readonly CacheItemPoolInterface $cacheApp,
+    ) {
         parent::__construct();
     }
 
@@ -24,7 +22,6 @@ class InboxMessageStopConsumersCommand extends Command
     {
         $this->setName('common:inbox:stop-consumers');
     }
-
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

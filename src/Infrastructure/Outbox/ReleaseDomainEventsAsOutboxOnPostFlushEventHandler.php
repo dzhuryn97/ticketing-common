@@ -3,11 +3,11 @@
 namespace Ticketing\Common\Infrastructure\Outbox;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Event\OnFlushEventArgs;
+use Doctrine\ORM\Event\PostFlushEventArgs;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Ticketing\Common\Domain\DomainEntity;
 
-class ReleaseDomainEventsAsOutboxOnFlushEventHandler
+class ReleaseDomainEventsAsOutboxOnPostFlushEventHandler
 {
     public function __construct(
         private readonly MessageBusInterface $outboxMessageBus,
@@ -15,19 +15,17 @@ class ReleaseDomainEventsAsOutboxOnFlushEventHandler
     ) {
     }
 
-    public function onFlush(OnFlushEventArgs $event)
+    public function postFlush(PostFlushEventArgs $event)
     {
-        $oof = $event->getObjectManager()->getUnitOfWork();
+        $uow = $event->getObjectManager()->getUnitOfWork();
 
-        $entities = array_merge(
-            $oof->getScheduledEntityInsertions(),
-            $oof->getScheduledEntityUpdates(),
-            $oof->getScheduledEntityDeletions(),
-        );
+        $domainEntities = [];
+        foreach ($uow->getIdentityMap() as $entities) {
+            $domainEntities = array_merge(array_filter($entities, function ($entity) {
+                return $entity instanceof DomainEntity;
+            }), $domainEntities);
+        }
 
-        $domainEntities = array_filter($entities, function ($entity) {
-            return $entity instanceof DomainEntity;
-        });
 
         /** @var DomainEntity[] $domainEntities */
         foreach ($domainEntities as $domainEntity) {

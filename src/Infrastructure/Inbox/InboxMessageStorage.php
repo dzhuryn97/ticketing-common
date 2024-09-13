@@ -2,15 +2,12 @@
 
 namespace Ticketing\Common\Infrastructure\Inbox;
 
-
 class InboxMessageStorage
 {
     public function __construct(
-        private readonly Connection $connection
-    )
-    {
+        private readonly Connection $connection,
+    ) {
     }
-
 
     public function ack(InboxMessage $inboxMessage): void
     {
@@ -49,5 +46,4 @@ class InboxMessageStorage
     {
         $this->connection->retry();
     }
-
 }

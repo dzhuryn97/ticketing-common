@@ -10,9 +10,8 @@ class EventCanceledIntegrationEvent extends AbstractIntegrationEvent
     public function __construct(
         UuidInterface $id,
         \DateTimeImmutable $occurredOn,
-        public readonly UuidInterface $eventId
-    )
-    {
+        public readonly UuidInterface $eventId,
+    ) {
         parent::__construct($id, $occurredOn);
     }
 }

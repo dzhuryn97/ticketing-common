@@ -2,7 +2,6 @@
 
 namespace Ticketing\Common\Application\Security;
 
-
 use Ramsey\Uuid\Rfc4122\UuidV4;
 use Ramsey\Uuid\UuidInterface;
 
@@ -11,8 +10,7 @@ class AuthUserDto
     public function __construct(
         public readonly UuidInterface $id,
         public readonly string $name,
-    )
-    {
+    ) {
     }
 
     public static function createFromJWTPayload(array $data): self

@@ -6,11 +6,9 @@ use Doctrine\ORM\Tools\Event\GenerateSchemaEventArgs;
 
 class InboxTableSchemaConfiguratorEventListener
 {
-
     public function __construct(
-        private readonly Connection $connection
-    )
-    {
+        private readonly Connection $connection,
+    ) {
     }
 
     public function __invoke(GenerateSchemaEventArgs $eventArgs)
