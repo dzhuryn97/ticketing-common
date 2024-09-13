@@ -15,11 +15,6 @@ use Ticketing\Common\Infrastructure\Command\OriginalDomainExceptionMiddleware;
  */
 class OriginalDomainExceptionMiddlewareTest extends TestCase
 {
-
-
-
-
-
     /**
      * @test
      */
