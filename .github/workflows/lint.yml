@@ -9,7 +9,7 @@ jobs:
         steps:
             - uses: actions/checkout@v4
             - name: PHPLint
-            - uses: michaelw90/PHP-Lint@master
+              uses: michaelw90/PHP-Lint@master
             - name: PHP-CS-Fixer
               uses: docker://oskarstark/php-cs-fixer-ga
             - uses: stefanzweifel/git-auto-commit-action@v5
