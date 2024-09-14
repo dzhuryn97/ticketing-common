@@ -65,6 +65,7 @@ class OriginalDomainExceptionMiddlewareTest extends TestCase
      */
     public function Handle_NextReturnEnvelope_ReturnThoseEnvelope()
     {
+        ();
         //Arrange
         $requestStackWithMainRequestMock = $this->getRequestStackWithMainRequest();
         $originalDomainExceptionMiddleware = new DomainExceptionExtractingMiddleware($requestStackWithMainRequestMock);
@@ -80,9 +81,7 @@ class OriginalDomainExceptionMiddlewareTest extends TestCase
         $result = $originalDomainExceptionMiddleware->handle($this->originalEnvelope, $this->stackMock);
 
         //Arrange
-        $this->assertEquals($this->nextMiddlewareEnvelop, $result);
-
-    }
+        $this->assertEquals($this->nextMiddlewareEnvelop, $result);}
 
     /**
      * @test
