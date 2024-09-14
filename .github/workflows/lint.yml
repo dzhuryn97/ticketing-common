@@ -1,13 +1,15 @@
 on: [push, pull_request]
 name: Main
 jobs:
-    php-cs-fixer:
-        name: PHP-CS-Fixer
+    lint:
+        name: Lint
         runs-on: ubuntu-latest
         permissions:
             contents: write
         steps:
             - uses: actions/checkout@v4
+            - name: PHPLint
+            - uses: michaelw90/PHP-Lint@master
             - name: PHP-CS-Fixer
               uses: docker://oskarstark/php-cs-fixer-ga
             - uses: stefanzweifel/git-auto-commit-action@v5
