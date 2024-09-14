@@ -68,6 +68,7 @@ class OriginalDomainExceptionMiddlewareTest extends TestCase
         ()
 
 
+
         //Arrange
         $requestStackWithMainRequestMock = $this->getRequestStackWithMainRequest();
         $originalDomainExceptionMiddleware = new DomainExceptionExtractingMiddleware($requestStackWithMainRequestMock);
