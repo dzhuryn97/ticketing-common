@@ -18,6 +18,10 @@
         "symfony/messenger": "7.1.*",
         "dg/bypass-finals": "^1.8",
         "friendsofphp/php-cs-fixer": "*",
-        "symfony/dependency-injection": "^7.1"
+        "symfony/dependency-injection": "^7.1",
+        "overtrue/phplint": "^9.4"
+    },
+    "scripts": {
+        "lint": "./vendor/bin/phplint"
     }
 }
