@@ -16,7 +16,6 @@ use Ticketing\Common\Infrastructure\Command\DomainExceptionExtractingMiddleware;
  */
 class OriginalDomainExceptionMiddlewareTest extends TestCase
 {
-
     private Envelope $nextMiddlewareEnvelop;
     /**
      * @var (object&\PHPUnit\Framework\MockObject\MockObject)|\PHPUnit\Framework\MockObject\MockObject|StackInterface|(StackInterface&object&\PHPUnit\Framework\MockObject\MockObject)|(StackInterface&\PHPUnit\Framework\MockObject\MockObject)
@@ -29,11 +28,9 @@ class OriginalDomainExceptionMiddlewareTest extends TestCase
     /**
      * @var (object&\PHPUnit\Framework\MockObject\MockObject)|\PHPUnit\Framework\MockObject\MockObject|MiddlewareInterface|(MiddlewareInterface&object&\PHPUnit\Framework\MockObject\MockObject)|(MiddlewareInterface&\PHPUnit\Framework\MockObject\MockObject)
      */
-    private  $nextMiddleware;
+    private $nextMiddleware;
     private HandlerFailedException $handlerFailedExceptionWithoutDomainException;
     private HandlerFailedException $handlerFailedExceptionWithDomainException;
-
-
 
     protected function setUp(): void
     {
@@ -63,9 +60,9 @@ class OriginalDomainExceptionMiddlewareTest extends TestCase
     /**
      * @test
      */
-    public function Handle_NextReturnEnvelope_ReturnThoseEnvelope()
+    public function handleNextReturnEnvelopeReturnThoseEnvelope()
     {
-        //Arrange
+        // Arrange
         $requestStackWithMainRequestMock = $this->getRequestStackWithMainRequest();
         $originalDomainExceptionMiddleware = new DomainExceptionExtractingMiddleware($requestStackWithMainRequestMock);
 
@@ -76,29 +73,29 @@ class OriginalDomainExceptionMiddlewareTest extends TestCase
             ->willReturn($this->nextMiddlewareEnvelop)
         ;
 
-        //Act
+        // Act
         $result = $originalDomainExceptionMiddleware->handle($this->originalEnvelope, $this->stackMock);
 
-        //Arrange
+        // Arrange
         $this->assertEquals($this->nextMiddlewareEnvelop, $result);
 
     }
 
     /**
      * @test
+     *
      * @dataProvider provideDataForHandlerFailedExceptionThrownTest
      */
-    public function Handle_HandlerFailedExceptionThrown_HandlerAndThrowCorrectException(
+    public function handleHandlerFailedExceptionThrownHandlerAndThrowCorrectException(
         $requestStack,
         $stack,
-        $expectedException
-    )
-    {
-        //Arrange
+        $expectedException,
+    ) {
+        // Arrange
         $originalDomainExceptionMiddleware = new DomainExceptionExtractingMiddleware($requestStack);
 
         $this->expectException($expectedException);
-        //Act
+        // Act
         $originalDomainExceptionMiddleware->handle($this->originalEnvelope, $stack);
     }
 
@@ -107,29 +104,28 @@ class OriginalDomainExceptionMiddlewareTest extends TestCase
         yield 'ContainDomainExceptionAndRequestExists' => [
             $this->getRequestStackWithMainRequest(),
             $this->getStackHandlerFailedExceptionContainerDomainException(),
-            \DomainException::class
+            \DomainException::class,
         ];
 
         yield 'ContainOtherExceptionAndRequestExists' => [
             $this->getRequestStackWithMainRequest(),
             $this->getStackHandlerFailedExceptionContainOtherException(),
-            HandlerFailedException::class
+            HandlerFailedException::class,
         ];
 
         yield 'ContainDomainExceptionAndRequestAbsent' => [
             $this->getEmptyRequestStackMock(),
             $this->getStackHandlerFailedExceptionContainerDomainException(),
-            HandlerFailedException::class
+            HandlerFailedException::class,
         ];
 
         yield 'ContainOtherExceptionAndRequestAbsent' => [
             $this->getEmptyRequestStackMock(),
             $this->getStackHandlerFailedExceptionContainOtherException(),
-            HandlerFailedException::class
+            HandlerFailedException::class,
         ];
 
     }
-
 
     private function getHandlerFailedException(array $exceptions): HandlerFailedException
     {
@@ -175,6 +171,7 @@ class OriginalDomainExceptionMiddlewareTest extends TestCase
                 )
             )
         ;
+
         return $stackMock;
     }
 
@@ -189,9 +186,9 @@ class OriginalDomainExceptionMiddlewareTest extends TestCase
                 )
             )
         ;
+
         return $stackMock;
     }
-
 
     private function getEmptyRequestStackMock()
     {
