@@ -2,7 +2,6 @@ on: [ push, pull_request ]
 name: CI
 jobs:
   cs-fixer:
-    needs: lint
     name: PHP-CS-Fixer
     runs-on: ubuntu-24.04
     permissions:
