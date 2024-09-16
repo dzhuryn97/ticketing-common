@@ -16,7 +16,6 @@ use Ticketing\Common\Infrastructure\Command\DomainExceptionExtractingMiddleware;
  */
 class OriginalDomainExceptionMiddlewareTest extends TestCase
 {
-    ()
     private Envelope $nextMiddlewareEnvelop;
     /**
      * @var (object&\PHPUnit\Framework\MockObject\MockObject)|\PHPUnit\Framework\MockObject\MockObject|StackInterface|(StackInterface&object&\PHPUnit\Framework\MockObject\MockObject)|(StackInterface&\PHPUnit\Framework\MockObject\MockObject)
@@ -49,6 +48,7 @@ class OriginalDomainExceptionMiddlewareTest extends TestCase
      */
     public function handleNextReturnEnvelopeReturnThoseEnvelope()
     {
+        $this->assertEquals(1, 2);
         // Arrange
         $requestStackWithMainRequestMock = $this->getRequestStackWithMainRequest();
         $originalDomainExceptionMiddleware = new DomainExceptionExtractingMiddleware($requestStackWithMainRequestMock);
