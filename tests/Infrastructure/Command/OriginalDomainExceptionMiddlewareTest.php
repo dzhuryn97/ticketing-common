@@ -46,7 +46,7 @@ class OriginalDomainExceptionMiddlewareTest extends TestCase
     /**
      * @test
      */
-    public function handle_NextReturnEnvelope_ReturnThoseEnvelope()
+    public function handleNextReturnEnvelopeReturnThoseEnvelope()
     {
         // Arrange
         $requestStackWithMainRequestMock = $this->getRequestStackWithMainRequest();
@@ -71,7 +71,7 @@ class OriginalDomainExceptionMiddlewareTest extends TestCase
      *
      * @dataProvider provideDataForHandlerFailedExceptionThrownTest
      */
-    public function handle_ExceptionThrown_RethrownCorrectException(
+    public function handleExceptionThrownRethrownCorrectException(
         $requestStack,
         $handlerFailedException,
         $expectedException,

@@ -1,8 +1,8 @@
 on: [ push, pull_request ]
 name: CI
 jobs:
-  cs-fixer:
-    name: PHP-CS-Fixer
+  ci:
+    name: analyze, test
     runs-on: ubuntu-24.04
     permissions:
       contents: write
