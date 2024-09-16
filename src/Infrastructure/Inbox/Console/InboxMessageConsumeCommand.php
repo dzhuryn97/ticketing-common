@@ -59,13 +59,6 @@ class InboxMessageConsumeCommand extends Command
         return Command::SUCCESS;
     }
 
-    // [warning] Error thrown while handling message Ticketing\Common\Infrastructure\Outbox\OutboxMessage. Sending for retry #3 using 3918 ms delay. Error: "Handling "Ticketing\Common\Infrastructure\Outbox\OutboxMessage" failed: "
-    // [info] Received message Ticketing\Common\Infrastructure\Outbox\OutboxMessage
-    // [critical] Error thrown while handling message Ticketing\Common\Infrastructure\Outbox\OutboxMessage. Removing from transport after 3 retries. Error: "Handling "Ticketing\Common\Infrastructure\Outbox\OutboxMessage" failed: "
-
-    // [info] Message Ticketing\Common\Infrastructure\Outbox\OutboxMessage handled by Ticketing\Common\Infrastructure\Outbox\OutboxMessageHandler::__invoke
-    // [info] Ticketing\Common\Infrastructure\Outbox\OutboxMessage was handled successfully (acknowledging to transport).
-
     private function tryHandle(InboxMessage $message, $retry, $delay)
     {
         $integrationEvent = $message->integrationsEvent;

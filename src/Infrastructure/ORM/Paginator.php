@@ -9,11 +9,12 @@ class Paginator
 {
     public static function paginate($query, int $page = 1, int $pageSize = 10): PaginatedResults
     {
+        $offset = $pageSize * ($page - 1);
         $paginator = new OrmPaginator($query);
 
         $paginator
             ->getQuery()
-            ->setFirstResult($pageSize * ($page - 1))
+            ->setFirstResult($offset)
             ->setMaxResults($pageSize);
 
 

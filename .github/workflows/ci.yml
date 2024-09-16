@@ -1,0 +1,18 @@
+on: [ push, pull_request ]
+name: CI
+jobs:
+  ci:
+    name: analyze, test
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Composer install
+        run: composer install
+      - name: Lint code
+        run: composer run lint
+      - name: Check code style
+        run: composer run cs-check
+      - name: Unit tests
+        run: composer run test
