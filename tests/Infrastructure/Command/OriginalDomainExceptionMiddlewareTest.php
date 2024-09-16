@@ -16,6 +16,7 @@ use Ticketing\Common\Infrastructure\Command\DomainExceptionExtractingMiddleware;
  */
 class OriginalDomainExceptionMiddlewareTest extends TestCase
 {
+    ()
     private Envelope $nextMiddlewareEnvelop;
     /**
      * @var (object&\PHPUnit\Framework\MockObject\MockObject)|\PHPUnit\Framework\MockObject\MockObject|StackInterface|(StackInterface&object&\PHPUnit\Framework\MockObject\MockObject)|(StackInterface&\PHPUnit\Framework\MockObject\MockObject)
