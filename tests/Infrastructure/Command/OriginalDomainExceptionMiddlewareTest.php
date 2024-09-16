@@ -16,7 +16,6 @@ use Ticketing\Common\Infrastructure\Command\DomainExceptionExtractingMiddleware;
  */
 class OriginalDomainExceptionMiddlewareTest extends TestCase
 {
-
     private Envelope $nextMiddlewareEnvelop;
     /**
      * @var (object&\PHPUnit\Framework\MockObject\MockObject)|\PHPUnit\Framework\MockObject\MockObject|StackInterface|(StackInterface&object&\PHPUnit\Framework\MockObject\MockObject)|(StackInterface&\PHPUnit\Framework\MockObject\MockObject)
@@ -29,16 +28,11 @@ class OriginalDomainExceptionMiddlewareTest extends TestCase
     /**
      * @var (object&\PHPUnit\Framework\MockObject\MockObject)|\PHPUnit\Framework\MockObject\MockObject|MiddlewareInterface|(MiddlewareInterface&object&\PHPUnit\Framework\MockObject\MockObject)|(MiddlewareInterface&\PHPUnit\Framework\MockObject\MockObject)
      */
-    private  $nextMiddleware;
-    private HandlerFailedException $handlerFailedExceptionWithoutDomainException;
-    private HandlerFailedException $handlerFailedExceptionWithDomainException;
-
-
+    private $nextMiddleware;
 
     protected function setUp(): void
     {
         $this->nextMiddlewareEnvelop = new Envelope(new \stdClass(), []);
-
         $this->nextMiddleware = $this->createMock(MiddlewareInterface::class);
 
         $this->stackMock = $this->createMock(StackInterface::class);
@@ -46,29 +40,15 @@ class OriginalDomainExceptionMiddlewareTest extends TestCase
             ->method('next')
             ->willReturn($this->nextMiddleware)
         ;
-
         $this->originalEnvelope = $this->createStub(Envelope::class);
-
-        $this->handlerFailedExceptionWithDomainException =  new HandlerFailedException(
-            $this->createStub(Envelope::class),
-            [new \DomainException()]
-        );
-
-        $this->handlerFailedExceptionWithoutDomainException =  new HandlerFailedException(
-            $this->createStub(Envelope::class),
-            [new \DomainException()]
-        );
     }
 
     /**
      * @test
      */
-    public function Handle_NextReturnEnvelope_ReturnThoseEnvelope()
+    public function handle_NextReturnEnvelope_ReturnThoseEnvelope()
     {
-        ()
-
-
-        //Arrange
+        // Arrange
         $requestStackWithMainRequestMock = $this->getRequestStackWithMainRequest();
         $originalDomainExceptionMiddleware = new DomainExceptionExtractingMiddleware($requestStackWithMainRequestMock);
 
@@ -79,122 +59,91 @@ class OriginalDomainExceptionMiddlewareTest extends TestCase
             ->willReturn($this->nextMiddlewareEnvelop)
         ;
 
-        //Act
+        // Act
         $result = $originalDomainExceptionMiddleware->handle($this->originalEnvelope, $this->stackMock);
 
-        //Arrange
+        // Arrange
         $this->assertEquals($this->nextMiddlewareEnvelop, $result);
-
     }
 
     /**
      * @test
+     *
      * @dataProvider provideDataForHandlerFailedExceptionThrownTest
      */
-    public function Handle_HandlerFailedExceptionThrown_HandlerAndThrowCorrectException(
+    public function handle_ExceptionThrown_RethrownCorrectException(
         $requestStack,
-        $stack,
-        $expectedException
-    )
-    {
-        //Arrange
+        $handlerFailedException,
+        $expectedException,
+    ) {
+        // Arrange
         $originalDomainExceptionMiddleware = new DomainExceptionExtractingMiddleware($requestStack);
+        $this
+            ->nextMiddleware
+            ->method('handle')
+            ->willThrowException($handlerFailedException)
+        ;
 
         $this->expectException($expectedException);
-        //Act
-        $originalDomainExceptionMiddleware->handle($this->originalEnvelope, $stack);
+        // Act
+        $originalDomainExceptionMiddleware->handle($this->originalEnvelope, $this->stackMock);
+        $this->assertEquals(1, 1);
     }
 
     public function provideDataForHandlerFailedExceptionThrownTest(): \Generator
     {
         yield 'ContainDomainExceptionAndRequestExists' => [
             $this->getRequestStackWithMainRequest(),
-            $this->getStackHandlerFailedExceptionContainerDomainException(),
-            \DomainException::class
+            $this->getHandlerFailedExceptionWithDomainException(),
+            \DomainException::class,
         ];
 
         yield 'ContainOtherExceptionAndRequestExists' => [
             $this->getRequestStackWithMainRequest(),
-            $this->getStackHandlerFailedExceptionContainOtherException(),
-            HandlerFailedException::class
+            $this->getHandlerFailedExceptionWithOtherException(),
+            HandlerFailedException::class,
         ];
 
         yield 'ContainDomainExceptionAndRequestAbsent' => [
             $this->getEmptyRequestStackMock(),
-            $this->getStackHandlerFailedExceptionContainerDomainException(),
-            HandlerFailedException::class
+            $this->getHandlerFailedExceptionWithDomainException(),
+            HandlerFailedException::class,
         ];
 
         yield 'ContainOtherExceptionAndRequestAbsent' => [
             $this->getEmptyRequestStackMock(),
-            $this->getStackHandlerFailedExceptionContainOtherException(),
-            HandlerFailedException::class
+            $this->getHandlerFailedExceptionWithOtherException(),
+            HandlerFailedException::class,
         ];
 
-    }
+        yield 'HandleThrownNotHandlerFailedExceptionRequestPresent' => [
+            $this->getEmptyRequestStackMock(),
+            new \Exception(),
+            \Exception::class,
+        ];
 
-
-    private function getHandlerFailedException(array $exceptions): HandlerFailedException
-    {
-        return  new HandlerFailedException(
-            $this->createStub(Envelope::class),
-            $exceptions
-        );
+        yield 'HandleThrownNotHandlerFailedExceptionRequestAbsent' => [
+            $this->getRequestStackWithMainRequest(),
+            new \Exception(),
+            \Exception::class,
+        ];
     }
 
     private function getHandlerFailedExceptionWithDomainException(): HandlerFailedException
     {
-        return $this->getHandlerFailedException([new \DomainException()]);
+        return  new HandlerFailedException(
+            $this->createStub(Envelope::class),
+            [new \DomainException()]
+        );
     }
 
     private function getHandlerFailedExceptionWithOtherException(): HandlerFailedException
     {
-        return  $this->getHandlerFailedException([new \InvalidArgumentException()]);
+        return  new HandlerFailedException(
+            $this->createStub(Envelope::class),
+            [new \InvalidArgumentException()]
+        );
     }
-
-    private function getMiddlewareWhichThrownHandlerFailedException($handlerFailedException)
-    {
-        $middleware = $this->createMock(MiddlewareInterface::class);
-
-        $middleware
-            ->expects($this->once())
-            ->method('handle')
-            ->willThrowException(
-                $handlerFailedException
-            )
-        ;
-
-        return $middleware;
-    }
-
-    private function getStackHandlerFailedExceptionContainerDomainException()
-    {
-        $stackMock = $this->createMock(StackInterface::class);
-        $stackMock
-            ->method('next')
-            ->willReturn(
-                $this->getMiddlewareWhichThrownHandlerFailedException(
-                    $this->getHandlerFailedExceptionWithDomainException()
-                )
-            )
-        ;
-        return $stackMock;
-    }
-
-    private function getStackHandlerFailedExceptionContainOtherException()
-    {
-        $stackMock = $this->createMock(StackInterface::class);
-        $stackMock
-            ->method('next')
-            ->willReturn(
-                $this->getMiddlewareWhichThrownHandlerFailedException(
-                    $this->getHandlerFailedExceptionWithOtherException()
-                )
-            )
-        ;
-        return $stackMock;
-    }
-
 
     private function getEmptyRequestStackMock()
     {

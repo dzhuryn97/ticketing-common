@@ -11,7 +11,6 @@ class InboxMessageStorage
 
     public function ack(InboxMessage $inboxMessage): void
     {
-
         $this->connection->ask($inboxMessage->inboxMessageId);
     }
 

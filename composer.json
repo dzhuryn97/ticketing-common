@@ -19,9 +19,13 @@
         "dg/bypass-finals": "^1.8",
         "friendsofphp/php-cs-fixer": "*",
         "symfony/dependency-injection": "^7.1",
-        "overtrue/phplint": "^9.4"
+        "overtrue/phplint": "^9.4",
+        "ramsey/uuid": "^4.7"
     },
     "scripts": {
-        "lint": "./vendor/bin/phplint"
+        "lint": "./vendor/bin/phplint",
+        "cs-fix": "./vendor/bin/php-cs-fixer fix",
+        "cs-check": "./vendor/bin/php-cs-fixer check",
+        "test": "./vendor/bin/phpunit"
     }
 }

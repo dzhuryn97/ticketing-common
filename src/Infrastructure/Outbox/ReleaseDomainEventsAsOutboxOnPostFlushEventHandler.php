@@ -7,6 +7,9 @@ use Doctrine\ORM\Event\PostFlushEventArgs;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Ticketing\Common\Domain\DomainEntity;
 
+/**
+ * For using in test env.
+ */
 class ReleaseDomainEventsAsOutboxOnPostFlushEventHandler
 {
     public function __construct(
@@ -25,7 +28,6 @@ class ReleaseDomainEventsAsOutboxOnPostFlushEventHandler
                 return $entity instanceof DomainEntity;
             }), $domainEntities);
         }
-
 
         /** @var DomainEntity[] $domainEntities */
         foreach ($domainEntities as $domainEntity) {

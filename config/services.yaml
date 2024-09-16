@@ -44,7 +44,7 @@ services:
 
     Ticketing\Common\Application\Caching\CacheInterface: '@common.caching.cache'
 
-    common.original_domain_exception_middleware:
-        class: Ticketing\Common\Infrastructure\Command\OriginalDomainExceptionMiddleware
+    common.domain_exception_extracting_middleware:
+        class: Ticketing\Common\Infrastructure\Command\DomainExceptionExtractingMiddleware
         arguments:
             $requestStack: '@request_stack'
