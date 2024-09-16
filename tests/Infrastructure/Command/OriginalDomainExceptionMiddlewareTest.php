@@ -87,7 +87,6 @@ class OriginalDomainExceptionMiddlewareTest extends TestCase
         $this->expectException($expectedException);
         // Act
         $originalDomainExceptionMiddleware->handle($this->originalEnvelope, $this->stackMock);
-        $this->assertEquals(1, 1);
     }
 
     public function provideDataForHandlerFailedExceptionThrownTest(): \Generator
