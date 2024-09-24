@@ -28,22 +28,10 @@ class CommonBundle extends AbstractBundle
             ->end()
             ->end()
             ->end();
-        //        $definition->rootNode()
-        //            ->children()
-        //            ->arrayNode('twitter')
-        //            ->children()
-        //            ->integerNode('client_id')->end()
-        //            ->scalarNode('client_secret')->end()
-        //            ->end()
-        //            ->end()
-        //            ->end();
     }
 
     public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void
     {
-        //        $eventBusName = $config['event_bus']['name'];
-
-        //        dd($eventBusName);
         $builder->registerForAutoconfiguration(QueryHandlerInterface::class)
             ->addTag('messenger.message_handler');
 
@@ -58,14 +46,11 @@ class CommonBundle extends AbstractBundle
 
 
         $container->import('../config/*');
-
-
     }
 
     public function build(ContainerBuilder $container)
     {
         $container->addCompilerPass(new InboxCompilerPass());
-
     }
 
     public function prependExtension(ContainerConfigurator $container, ContainerBuilder $builder): void
@@ -73,18 +58,17 @@ class CommonBundle extends AbstractBundle
         $commonConfig = $builder->getExtensionConfig('common');
         $eventBusConfig = $commonConfig[0]['event_bus'];
 
-
         $container->extension('framework', [
             'messenger' => [
                 'buses' => [
                     'common.command_bus' => [
                         'middleware' => [
-                            'common.original_domain_exception_middleware' => [],
+                            'common.domain_exception_extracting_middleware' => [],
                         ],
                     ],
                     'common.query_bus' => [
                         'middleware' => [
-                            'common.original_domain_exception_middleware' => [],
+                            'common.domain_exception_extracting_middleware' => [],
                         ],
                     ],
                     'common.outbox_message_bus' => [
@@ -114,8 +98,6 @@ class CommonBundle extends AbstractBundle
                 'routing' => [
                     OutboxMessage::class => 'common.outbox',
                     IntegrationEventInterface::class => 'common.distributed',
-                    //                    OutboxMessage::class => 'sync',
-                    //                    IntegrationEventInterface::class => 'sync',
                 ],
             ],
         ], prepend: true);
