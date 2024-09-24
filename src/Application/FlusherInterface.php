@@ -2,6 +2,9 @@
 
 namespace Ticketing\Common\Application;
 
+/**
+ * @deprecated use UnitOfWorkInterface
+ */
 interface FlusherInterface
 {
     public function flush(): void;
