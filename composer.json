@@ -11,7 +11,7 @@
             "Ticketing\\Common\\Tests\\": "tests/"
         }
     },
-    "version": "dev-dev",
+    "version": "0.0.1",
     "require-dev": {
         "phpunit/phpunit": "^9.5",
         "symfony/http-kernel": "7.1.*",
@@ -20,7 +20,9 @@
         "friendsofphp/php-cs-fixer": "*",
         "symfony/dependency-injection": "^7.1",
         "overtrue/phplint": "^9.4",
-        "ramsey/uuid": "^4.7"
+        "ramsey/uuid": "^4.7",
+        "doctrine/orm": "^2",
+        "lexik/jwt-authentication-bundle": "^3.1"
     },
     "scripts": {
         "lint": "./vendor/bin/phplint",

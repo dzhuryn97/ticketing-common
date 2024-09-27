@@ -28,6 +28,6 @@ class SecurityService implements Security
             return null;
         }
 
-        return new AuthUserDto(UuidV4::fromString($authenticatedUser->getUserIdentifier()), 'test');
+        return new AuthUserDto(UuidV4::fromString($authenticatedUser->getUserIdentifier()), $authenticatedUser->getName());
     }
 }
