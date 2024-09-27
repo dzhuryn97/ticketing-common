@@ -1,6 +1,6 @@
 services:
     common.outbox.domain_events_releaser:
-        class: Ticketing\Common\Infrastructure\Outbox\ReleaseDomainEventsAsOutboxOnPostFlushEventHandler
+        class: Ticketing\Common\Infrastructure\Outbox\ReleaseDomainEventsAsOutboxOnFlushEventHandler
         tags:
             - { name: doctrine.event_listener, event: onFlush }
         arguments:
