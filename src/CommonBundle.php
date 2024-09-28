@@ -11,6 +11,9 @@ use Ticketing\Common\Application\DomainEventHandlerInterface;
 use Ticketing\Common\Application\EventBus\IntegrationEventHandlerInterface;
 use Ticketing\Common\Application\EventBus\IntegrationEventInterface;
 use Ticketing\Common\Application\Query\QueryHandlerInterface;
+use Ticketing\Common\Domain\Exception\BusinessException;
+use Ticketing\Common\Domain\Exception\EntityNotFoundException;
+use Ticketing\Common\Infrastructure\DI\ErrorCompilerPass;
 use Ticketing\Common\Infrastructure\Inbox\InboxCompilerPass;
 use Ticketing\Common\Infrastructure\Outbox\OutboxMessage;
 
@@ -51,6 +54,7 @@ class CommonBundle extends AbstractBundle
     public function build(ContainerBuilder $container)
     {
         $container->addCompilerPass(new InboxCompilerPass());
+        $container->addCompilerPass(new ErrorCompilerPass());
     }
 
     public function prependExtension(ContainerConfigurator $container, ContainerBuilder $builder): void
@@ -63,12 +67,12 @@ class CommonBundle extends AbstractBundle
                 'buses' => [
                     'common.command_bus' => [
                         'middleware' => [
-                            'common.domain_exception_extracting_middleware' => [],
+                            'common.business_exception_extracting_middleware' => [],
                         ],
                     ],
                     'common.query_bus' => [
                         'middleware' => [
-                            'common.domain_exception_extracting_middleware' => [],
+                            'common.business_exception_extracting_middleware' => [],
                         ],
                     ],
                     'common.outbox_message_bus' => [
@@ -104,7 +108,14 @@ class CommonBundle extends AbstractBundle
 
         $container->extension('api_platform', [
             'exception_to_status' => [
-                \DomainException::class => 400,
+                EntityNotFoundException::class => 404,
+                BusinessException::class => 400,
+            ],
+            'mapping' => [
+                'paths' => [
+                    // TODO hotfix think how to show resources from common package
+                    '%kernel.project_dir%/vendor/volodymyr/ticketing-common/src/Presenter/ApiPlatform/ErrorResource',
+                ],
             ],
         ], prepend: true);
     }

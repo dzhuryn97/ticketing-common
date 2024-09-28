@@ -9,7 +9,7 @@ use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\Middleware\MiddlewareInterface;
 use Symfony\Component\Messenger\Middleware\StackInterface;
-use Ticketing\Common\Infrastructure\Command\DomainExceptionExtractingMiddleware;
+use Ticketing\Common\Infrastructure\Command\BusinessExceptionExtractingMiddleware;
 
 /**
  * @covers \OriginalDomainExceptionMiddleware
@@ -50,7 +50,7 @@ class OriginalDomainExceptionMiddlewareTest extends TestCase
     {
         // Arrange
         $requestStackWithMainRequestMock = $this->getRequestStackWithMainRequest();
-        $originalDomainExceptionMiddleware = new DomainExceptionExtractingMiddleware($requestStackWithMainRequestMock);
+        $originalDomainExceptionMiddleware = new BusinessExceptionExtractingMiddleware($requestStackWithMainRequestMock);
 
         $this->nextMiddleware
             ->expects($this->once())
@@ -77,7 +77,7 @@ class OriginalDomainExceptionMiddlewareTest extends TestCase
         $expectedException,
     ) {
         // Arrange
-        $originalDomainExceptionMiddleware = new DomainExceptionExtractingMiddleware($requestStack);
+        $originalDomainExceptionMiddleware = new BusinessExceptionExtractingMiddleware($requestStack);
         $this
             ->nextMiddleware
             ->method('handle')

@@ -1,0 +1,18 @@
+services:
+    common.error.exception_transformer.business_exception_transformer:
+        class: Ticketing\Common\Presenter\ApiPlatform\ExceptionTransformer\BusinessExceptionTransformer
+        tags:
+            - { name: 'common.error.exception_transformer', priority: 1 }
+
+    common.error.exception_transformer.exception_transformer:
+        class: Ticketing\Common\Presenter\ApiPlatform\ExceptionTransformer\ExceptionTransformer
+        tags:
+            - { name: 'common.error.exception_transformer' }
+        arguments:
+            $debug: '%kernel.debug%'
+
+    common.error.exception_transformer.delegated_exception_transformer:
+        class: Ticketing\Common\Presenter\ApiPlatform\ExceptionTransformer\DelegatedExceptionTransformer
+        arguments:
+            $transformers: !tagged_iterator common.error.exception_transformer
+
