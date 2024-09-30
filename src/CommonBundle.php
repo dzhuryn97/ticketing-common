@@ -84,7 +84,12 @@ class CommonBundle extends AbstractBundle
 
                 ],
                 'transports' => [
-                    'common.outbox' => '%env(MESSENGER_DOCTRINE_TRANSPORT_DSN)%',
+                    'common.outbox' => [
+                        'dsn' => '%env(MESSENGER_DOCTRINE_TRANSPORT_DSN)%',
+                        'options' => [
+                            'get_notify_timeout' => 20000,
+                        ],
+                    ],
                     'common.distributed' => [
                         'dsn' => '%env(MESSENGER_DISTRIBUTED_TRANSPORT_DSN)%',
                         'options' => [
