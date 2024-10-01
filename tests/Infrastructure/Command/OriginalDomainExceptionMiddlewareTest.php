@@ -9,6 +9,7 @@ use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\Middleware\MiddlewareInterface;
 use Symfony\Component\Messenger\Middleware\StackInterface;
+use Ticketing\Common\Domain\Exception\BusinessException;
 use Ticketing\Common\Infrastructure\Command\BusinessExceptionExtractingMiddleware;
 
 /**
@@ -95,7 +96,7 @@ class OriginalDomainExceptionMiddlewareTest extends TestCase
         yield 'ContainDomainExceptionAndRequestExists' => [
             $this->getRequestStackWithMainRequest(),
             $this->getHandlerFailedExceptionWithDomainException(),
-            \DomainException::class,
+            BusinessException::class,
         ];
 
         yield 'ContainOtherExceptionAndRequestExists' => [
@@ -133,7 +134,7 @@ class OriginalDomainExceptionMiddlewareTest extends TestCase
     {
         return  new HandlerFailedException(
             $this->createStub(Envelope::class),
-            [new \DomainException()]
+            [new FakeBusinessException()]
         );
     }
 
