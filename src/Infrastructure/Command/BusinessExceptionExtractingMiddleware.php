@@ -53,7 +53,7 @@ class BusinessExceptionExtractingMiddleware implements MiddlewareInterface
     {
         $businessExceptions = [];
         foreach ($e->getWrappedExceptions() as $wrappedException) {
-            if($wrappedException instanceof BusinessException){
+            if ($wrappedException instanceof BusinessException) {
                 $businessExceptions[] = $wrappedException;
             }
         }
