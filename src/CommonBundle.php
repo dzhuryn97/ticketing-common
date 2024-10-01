@@ -11,6 +11,9 @@ use Ticketing\Common\Application\DomainEventHandlerInterface;
 use Ticketing\Common\Application\EventBus\IntegrationEventHandlerInterface;
 use Ticketing\Common\Application\EventBus\IntegrationEventInterface;
 use Ticketing\Common\Application\Query\QueryHandlerInterface;
+use Ticketing\Common\Domain\Exception\BusinessException;
+use Ticketing\Common\Domain\Exception\EntityNotFoundException;
+use Ticketing\Common\Infrastructure\DI\ErrorCompilerPass;
 use Ticketing\Common\Infrastructure\Inbox\InboxCompilerPass;
 use Ticketing\Common\Infrastructure\Outbox\OutboxMessage;
 
@@ -28,22 +31,10 @@ class CommonBundle extends AbstractBundle
             ->end()
             ->end()
             ->end();
-        //        $definition->rootNode()
-        //            ->children()
-        //            ->arrayNode('twitter')
-        //            ->children()
-        //            ->integerNode('client_id')->end()
-        //            ->scalarNode('client_secret')->end()
-        //            ->end()
-        //            ->end()
-        //            ->end();
     }
 
     public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void
     {
-        //        $eventBusName = $config['event_bus']['name'];
-
-        //        dd($eventBusName);
         $builder->registerForAutoconfiguration(QueryHandlerInterface::class)
             ->addTag('messenger.message_handler');
 
@@ -58,14 +49,12 @@ class CommonBundle extends AbstractBundle
 
 
         $container->import('../config/*');
-
-
     }
 
     public function build(ContainerBuilder $container)
     {
         $container->addCompilerPass(new InboxCompilerPass());
-
+        $container->addCompilerPass(new ErrorCompilerPass());
     }
 
     public function prependExtension(ContainerConfigurator $container, ContainerBuilder $builder): void
@@ -73,18 +62,17 @@ class CommonBundle extends AbstractBundle
         $commonConfig = $builder->getExtensionConfig('common');
         $eventBusConfig = $commonConfig[0]['event_bus'];
 
-
         $container->extension('framework', [
             'messenger' => [
                 'buses' => [
                     'common.command_bus' => [
                         'middleware' => [
-                            'common.original_domain_exception_middleware' => [],
+                            'common.business_exception_extracting_middleware' => [],
                         ],
                     ],
                     'common.query_bus' => [
                         'middleware' => [
-                            'common.original_domain_exception_middleware' => [],
+                            'common.business_exception_extracting_middleware' => [],
                         ],
                     ],
                     'common.outbox_message_bus' => [
@@ -96,7 +84,12 @@ class CommonBundle extends AbstractBundle
 
                 ],
                 'transports' => [
-                    'common.outbox' => '%env(MESSENGER_DOCTRINE_TRANSPORT_DSN)%',
+                    'common.outbox' => [
+                        'dsn' => '%env(MESSENGER_DOCTRINE_TRANSPORT_DSN)%',
+                        'options' => [
+                            'get_notify_timeout' => 20000,
+                        ],
+                    ],
                     'common.distributed' => [
                         'dsn' => '%env(MESSENGER_DISTRIBUTED_TRANSPORT_DSN)%',
                         'options' => [
@@ -114,15 +107,20 @@ class CommonBundle extends AbstractBundle
                 'routing' => [
                     OutboxMessage::class => 'common.outbox',
                     IntegrationEventInterface::class => 'common.distributed',
-                    //                    OutboxMessage::class => 'sync',
-                    //                    IntegrationEventInterface::class => 'sync',
                 ],
             ],
         ], prepend: true);
 
         $container->extension('api_platform', [
             'exception_to_status' => [
-                \DomainException::class => 400,
+                EntityNotFoundException::class => 404,
+                BusinessException::class => 400,
+            ],
+            'mapping' => [
+                'paths' => [
+                    // TODO hotfix think how to show resources from common package
+                    '%kernel.project_dir%/vendor/volodymyr/ticketing-common/src/Presenter/ApiPlatform/ErrorResource',
+                ],
             ],
         ], prepend: true);
     }

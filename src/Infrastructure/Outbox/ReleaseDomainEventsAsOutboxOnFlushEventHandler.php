@@ -17,26 +17,48 @@ class ReleaseDomainEventsAsOutboxOnFlushEventHandler
 
     public function onFlush(OnFlushEventArgs $event)
     {
-        $oof = $event->getObjectManager()->getUnitOfWork();
+        $uow = $event->getObjectManager()->getUnitOfWork();
 
-        $entities = array_merge(
-            $oof->getScheduledEntityInsertions(),
-            $oof->getScheduledEntityUpdates(),
-            $oof->getScheduledEntityDeletions(),
-        );
+        $entities = $this->getManagedEntities($uow);
+        $domainEntities = $this->filterDomainEntities($entities);
 
-        $domainEntities = array_filter($entities, function ($entity) {
+        $this->handleDomainEntities($domainEntities);
+    }
+
+    private function getManagedEntities(\Doctrine\ORM\UnitOfWork $uow): array
+    {
+        $entities = [];
+        foreach ($uow->getIdentityMap() as $entitiesOfClass) {
+            foreach ($entitiesOfClass as $_entity) {
+                $entities[] = $_entity;
+            }
+        }
+
+        return $entities;
+    }
+
+    private function filterDomainEntities(array $entities): array
+    {
+        return array_filter($entities, function ($entity) {
             return $entity instanceof DomainEntity;
         });
+    }
 
+    private function handleDomainEntities(array $domainEntities)
+    {
         /** @var DomainEntity[] $domainEntities */
         foreach ($domainEntities as $domainEntity) {
 
             $domainEvents = $domainEntity->releaseDomainEvents();
             foreach ($domainEvents as $domainEvent) {
-                $outboxMessage = new OutboxMessage($domainEvent);
-                $this->outboxMessageBus->dispatch($outboxMessage);
+                $this->dispatchAsOutbox($domainEvent);
             }
         }
+    }
+
+    private function dispatchAsOutbox(\Ticketing\Common\Domain\DomainEvent $domainEvent)
+    {
+        $outboxMessage = new OutboxMessage($domainEvent);
+        $this->outboxMessageBus->dispatch($outboxMessage);
     }
 }

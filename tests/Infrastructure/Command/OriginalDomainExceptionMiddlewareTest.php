@@ -9,7 +9,8 @@ use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\Middleware\MiddlewareInterface;
 use Symfony\Component\Messenger\Middleware\StackInterface;
-use Ticketing\Common\Infrastructure\Command\DomainExceptionExtractingMiddleware;
+use Ticketing\Common\Domain\Exception\BusinessException;
+use Ticketing\Common\Infrastructure\Command\BusinessExceptionExtractingMiddleware;
 
 /**
  * @covers \OriginalDomainExceptionMiddleware
@@ -50,7 +51,7 @@ class OriginalDomainExceptionMiddlewareTest extends TestCase
     {
         // Arrange
         $requestStackWithMainRequestMock = $this->getRequestStackWithMainRequest();
-        $originalDomainExceptionMiddleware = new DomainExceptionExtractingMiddleware($requestStackWithMainRequestMock);
+        $originalDomainExceptionMiddleware = new BusinessExceptionExtractingMiddleware($requestStackWithMainRequestMock);
 
         $this->nextMiddleware
             ->expects($this->once())
@@ -77,7 +78,7 @@ class OriginalDomainExceptionMiddlewareTest extends TestCase
         $expectedException,
     ) {
         // Arrange
-        $originalDomainExceptionMiddleware = new DomainExceptionExtractingMiddleware($requestStack);
+        $originalDomainExceptionMiddleware = new BusinessExceptionExtractingMiddleware($requestStack);
         $this
             ->nextMiddleware
             ->method('handle')
@@ -95,7 +96,7 @@ class OriginalDomainExceptionMiddlewareTest extends TestCase
         yield 'ContainDomainExceptionAndRequestExists' => [
             $this->getRequestStackWithMainRequest(),
             $this->getHandlerFailedExceptionWithDomainException(),
-            \DomainException::class,
+            BusinessException::class,
         ];
 
         yield 'ContainOtherExceptionAndRequestExists' => [
@@ -133,7 +134,7 @@ class OriginalDomainExceptionMiddlewareTest extends TestCase
     {
         return  new HandlerFailedException(
             $this->createStub(Envelope::class),
-            [new \DomainException()]
+            [new FakeBusinessException()]
         );
     }
 

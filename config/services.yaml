@@ -24,6 +24,13 @@ services:
 
     Ticketing\Common\Application\FlusherInterface: '@common.flusher'
 
+    common.unit_of_work:
+        class: Ticketing\Common\Infrastructure\ORM\DoctrineBasedUnitOfWork
+        arguments:
+            - '@doctrine.orm.entity_manager'
+
+    Ticketing\Common\Application\UnitOfWork: '@common.unit_of_work'
+
     common.event_bus:
         class: Ticketing\Common\Infrastructure\EventBus\EventBus
         arguments:
@@ -44,7 +51,7 @@ services:
 
     Ticketing\Common\Application\Caching\CacheInterface: '@common.caching.cache'
 
-    common.domain_exception_extracting_middleware:
-        class: Ticketing\Common\Infrastructure\Command\DomainExceptionExtractingMiddleware
+    common.business_exception_extracting_middleware:
+        class: Ticketing\Common\Infrastructure\Command\BusinessExceptionExtractingMiddleware
         arguments:
             $requestStack: '@request_stack'

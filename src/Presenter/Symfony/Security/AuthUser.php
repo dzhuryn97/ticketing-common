@@ -9,21 +9,23 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 final class AuthUser implements UserInterface, JWTUserInterface
 {
-    private string $id;
-
-    private array $roles;
+    public const string DEFAULT_ROLE = 'ROLE_USER';
 
     public function __construct(
-        string $id,
-        array $roles,
+        private readonly string $id,
+        private readonly string $name,
+        private readonly array $roles,
     ) {
-        $this->id = $id;
-        $this->roles = $roles;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
     }
 
     public function getRoles(): array
     {
-        return $this->roles;
+        return array_merge([self::DEFAULT_ROLE], $this->roles);
     }
 
     public function eraseCredentials(): void
@@ -35,10 +37,8 @@ final class AuthUser implements UserInterface, JWTUserInterface
         return $this->id;
     }
 
-    public static function createFromPayload($username, array $payload)
+    public static function createFromPayload($username, array $payload): self
     {
-        $obj = new self($username, $payload['roles']);
-
-        return $obj;
+        return new self($username, $payload['name'], $payload['roles']);
     }
 }
