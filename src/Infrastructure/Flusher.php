@@ -5,6 +5,9 @@ namespace Ticketing\Common\Infrastructure;
 use Doctrine\ORM\EntityManagerInterface;
 use Ticketing\Common\Application\FlusherInterface;
 
+/**
+ * @deprecated
+ */
 class Flusher implements FlusherInterface
 {
     private EntityManagerInterface $entityManager;

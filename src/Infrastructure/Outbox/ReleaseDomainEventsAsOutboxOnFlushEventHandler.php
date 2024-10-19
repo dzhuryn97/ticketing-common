@@ -2,7 +2,6 @@
 
 namespace Ticketing\Common\Infrastructure\Outbox;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Ticketing\Common\Domain\DomainEntity;
@@ -11,7 +10,6 @@ class ReleaseDomainEventsAsOutboxOnFlushEventHandler
 {
     public function __construct(
         private readonly MessageBusInterface $outboxMessageBus,
-        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 

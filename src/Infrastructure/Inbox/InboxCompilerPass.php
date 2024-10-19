@@ -36,6 +36,5 @@ class InboxCompilerPass implements CompilerPassInterface
 
         $inboxMessageHandlerDefinition = $container->getDefinition('common.inbox.message_consume_command');
         $inboxMessageHandlerDefinition->setArgument('$eventToHandlersMap', $eventToHandlersMap);
-
     }
 }

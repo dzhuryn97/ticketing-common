@@ -22,7 +22,6 @@ class InboxMessagesRetryCommand extends Command
     protected function configure()
     {
         $this->setName('common:inbox:messages-retry');
-
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

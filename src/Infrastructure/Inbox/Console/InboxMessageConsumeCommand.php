@@ -51,9 +51,7 @@ class InboxMessageConsumeCommand extends Command
                 continue;
             }
 
-
             $this->tryHandle($message, 1, self::RETRY_DELAY);
-
         }
 
         return Command::SUCCESS;
@@ -61,18 +59,15 @@ class InboxMessageConsumeCommand extends Command
 
     private function tryHandle(InboxMessage $message, $retry, $delay)
     {
-        $integrationEvent = $message->integrationsEvent;
-
-        $eventClass = get_class($integrationEvent);
-        $this->logger->info(
-            'Handling inboxMessage with integrationEvent {event}',
-            ['event' => get_class($integrationEvent)]
-        );
-
         try {
+            $integrationEvent = $message->integrationsEvent;
             $eventClass = get_class($integrationEvent);
-            $handlers = $this->eventToHandlersMap[$eventClass] ?? [];
+            $this->logger->info(
+                'Handling inboxMessage with integrationEvent {event}',
+                ['event' => get_class($integrationEvent)]
+            );
 
+            $handlers = $this->eventToHandlersMap[$eventClass] ?? [];
             if (!$handlers) {
                 $this->inboxMessageStorage->ack($message);
                 $this->logger->info('No handlers for event {event}', ['event' => $eventClass]);
