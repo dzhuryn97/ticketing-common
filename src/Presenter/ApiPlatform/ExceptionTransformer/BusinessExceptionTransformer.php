@@ -8,7 +8,7 @@ use Ticketing\Common\Presenter\ApiPlatform\ErrorResource\BusinessErrorResource;
 class BusinessExceptionTransformer implements ExceptionTransformerInterface
 {
     /**
-     * @param BusinessErrorResource $exception
+     * @param BusinessException $exception
      */
     public function transform(\Throwable $exception, int $status)
     {

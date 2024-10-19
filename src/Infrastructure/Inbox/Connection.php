@@ -9,6 +9,9 @@ use Doctrine\DBAL\Types\Types;
 use Ramsey\Uuid\Doctrine\UuidType;
 use Ramsey\Uuid\UuidInterface;
 
+/**
+ * Class created base on default messenger doctrine transport, most of the code was copy-paster.
+ */
 class Connection
 {
     private const TABLE_NAME = 'inbox_messages';
